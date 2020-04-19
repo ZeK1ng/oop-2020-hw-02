@@ -34,7 +34,33 @@ public class Piece {
 	 Makes its own copy of the array and the TPoints inside it.
 	*/
 	public Piece(TPoint[] points) {
-		// YOUR CODE HERE
+		Arrays.sort(points);
+		this.body = points;
+		
+		int currW=0;
+		int currH = 0;
+		for(TPoint p :points) {
+			if(currW<=p.x) {
+				currW=p.x+1;
+			}
+			if(currH<=p.y) {
+				currH = p.y+1;
+			}
+		}
+		
+		int []skirt = new int[currW];
+		for(int i=0; i<currW;i++) {
+			skirt[i] = currH;
+		}
+		for(TPoint p :points) {
+			if(skirt[p.x]>p.y) {
+				skirt[p.x]=p.y;
+			}
+		}
+		
+		this.skirt=skirt;
+		this.width=currW;
+		this.height=currH;
 	}
 	
 
@@ -87,21 +113,26 @@ public class Piece {
 	 rotated from the receiver.
 	 */
 	public Piece computeNextRotation() {
-		// YOUR CODE HERE
-		return null; // YOUR CODE HERE
+		Piece nextPiece;
+		TPoint[] rotate_points=new TPoint[body.length];
+		for(int i= 0; i<body.length; i++) {
+			TPoint new_rotate_p = new TPoint(height-body[i].y-1,body[i].x);
+			rotate_points[i] = new_rotate_p;
+		}
+		nextPiece = new Piece(rotate_points);
+		return nextPiece;
 	}
 
 	/**
 	 Returns a pre-computed piece that is 90 degrees counter-clockwise
 	 rotated from the receiver.	 Fast because the piece is pre-computed.
-	 This only works on pieces set up by makeFastRotations(), and otherwise
+	 This only works on pieces set up0 by makeFastRotations(), and otherwise
 	 just returns null.
 	*/	
 	public Piece fastRotation() {
 		return next;
 	}
 	
-
 
 	/**
 	 Returns true if two pieces are the same --
@@ -119,9 +150,10 @@ public class Piece {
 		// (null will be false)
 		if (!(obj instanceof Piece)) return false;
 		Piece other = (Piece)obj;
-		
-		// YOUR CODE HERE
-		return true;
+		TPoint []other_body = other.getBody();
+		Arrays.sort(other_body);
+		return Arrays.equals(other_body,this.getBody());
+
 	}
 
 
@@ -187,8 +219,18 @@ public class Piece {
 	 to the first piece.
 	*/
 	private static Piece makeFastRotations(Piece root) {
-		// YOUR CODE HERE
-		return null; // YOUR CODE HERE
+		Piece initial_state = root;
+		Piece next_state;
+		while(true) {
+			next_state = initial_state.computeNextRotation();
+			if(next_state.equals(root)) {
+				initial_state.next =root;
+				break;
+			}
+			initial_state.next=next_state;
+			initial_state = next_state;
+		}
+		return root;
 	}
 	
 	
