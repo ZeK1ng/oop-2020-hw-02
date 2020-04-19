@@ -264,6 +264,9 @@ public class PieceTest extends TestCase {
 		assertTrue(square.equals(square));
 		assertTrue(square.equals(square_initial));
 		assertFalse(s1.equals("sada"));
+		assertFalse(s1.equals(square));
+		assertFalse(s1.equals(s1_rotated));
+		assertFalse(L1.equals(L1_rotate2));
 	}
 	
 	
