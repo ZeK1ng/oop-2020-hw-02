@@ -247,21 +247,21 @@ public class Board	{
 		for(int col = 0; col<width; col++) {
 			heights[col] =0 ; ///update this later
 			for(int i = 0; i<grid[col].length-1; i++) {
-			//	if(i>=row) {
+				if(i>=row){
 					grid[col][i]=grid[col][i+1];
 					if(col == 0) {
 						widths[i] = widths[i+1];
 					}
-					if(grid[col][i]) {
-						heights[col]=i+1;
-					}
-				
+				}
+				if(grid[col][i]) {
+					heights[col]=i+1;
+				}
 			}
 		}
 		this.widths[grid[0].length-1] = 0;
 		for(int i = 0; i< grid.length; i++) {
 			grid[i][grid[0].length-1] = false;
-		}
+		} 
 	}
 	
 	private void go_to_prev_state() {
