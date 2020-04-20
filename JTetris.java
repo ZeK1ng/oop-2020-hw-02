@@ -207,6 +207,7 @@ public class JTetris extends JComponent {
 		// cheap way to reset the board state
 		board = new Board(WIDTH, HEIGHT + TOP_SPACE);
 		
+		
 		// draw the new board state once
 		repaint();
 		
@@ -359,6 +360,7 @@ public class JTetris extends JComponent {
 		newPiece = currentPiece;
 		newX = currentX;
 		newY = currentY;
+		
 		
 		// Make changes based on the verb
 		switch (verb) {

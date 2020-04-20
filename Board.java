@@ -90,9 +90,9 @@ public class Board	{
 		for(int x= 0; x<width;x++) {
 			for(int y = 0 ;y <height;y++ ) {
 				if(grid[x][y]) {
-					if(y>=checker_heights[x]) {
+				//	if(y>=checker_heights[x]) {
 						checker_heights[x]=y+1;
-					}
+				//	}
 					checker_widths[y]++;
 				}
 			}
@@ -105,7 +105,6 @@ public class Board	{
 			setup_sanity_check(checker_widths, checker_heights);
 			assertTrue(Arrays.equals(checker_heights, heights));
 			assertTrue(Arrays.equals(checker_widths, widths));
-			
 		}
 		
 	}
@@ -185,10 +184,12 @@ public class Board	{
 	public int place(Piece piece, int x, int y) {
 		// flag !committed problem
 		if (!committed) throw new RuntimeException("place commit problem");
+		committed=false;
+		backupGrid();
 		if(x <0 || y<0) return PLACE_OUT_BOUNDS; 
 		if(x>=width || y>=height) return PLACE_OUT_BOUNDS;
 		int result = PLACE_OK;
-		backupGrid();
+		
 		for(TPoint pt:piece.getBody()) {
 			int new_x = x+pt.x;
 			int new_y = y+ pt.y;
@@ -201,17 +202,18 @@ public class Board	{
 			int new_y = y+ pt.y;
 			grid[new_x][new_y] = true;
 			
-			if(this.heights[new_x]<new_y+1) {
+		//	if(this.heights[new_x]<new_y+1) {
 				this.heights[new_x] = new_y+1;
-			}
+			//}
 			this.widths[new_y]++;
 			if(widths[new_y]==width) {
 				result = PLACE_ROW_FILLED;
 			}
 			
 		}
+		
 		sanityCheck();
-		committed=false;
+		
 		return result;
 	}
 	
@@ -227,12 +229,14 @@ public class Board	{
 	 things above down. Returns the number of rows cleared.
 	*/
 	public int clearRows() {
+		if(committed) {
+			committed=false;
+			backupGrid();
+		}
 		int rowsCleared = 0;
-		// YOUR CODE HERE
 		for(int row= 0; row<height;row++) {
 			if(widths[row]==width) {
-				clearRow(row);
-				row--;
+				clearRow(row--);
 				rowsCleared++;
 			}
 		}
@@ -243,7 +247,7 @@ public class Board	{
 		for(int col = 0; col<width; col++) {
 			heights[col] =0 ; ///update this later
 			for(int i = 0; i<grid[col].length-1; i++) {
-				if(i>=row) {
+			//	if(i>=row) {
 					grid[col][i]=grid[col][i+1];
 					if(col == 0) {
 						widths[i] = widths[i+1];
@@ -251,7 +255,7 @@ public class Board	{
 					if(grid[col][i]) {
 						heights[col]=i+1;
 					}
-				}
+				
 			}
 		}
 		this.widths[grid[0].length-1] = 0;
@@ -281,7 +285,7 @@ public class Board	{
 	 See the overview docs.
 	*/
 	public void undo() {
-		if(!committed)return;
+		if(committed)return;
 		go_to_prev_state();
 		commit();
 	}

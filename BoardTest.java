@@ -156,11 +156,15 @@ public class BoardTest extends TestCase {
 		b = new Board(3,6);
 
 		assertEquals(Board.PLACE_OUT_BOUNDS,b.place(pyr1, -1, -1));
+		b.commit();
 		assertEquals(Board.PLACE_OUT_BOUNDS,b.place(pyr1, 0, -1));
+		b.commit();
 		assertEquals(Board.PLACE_OUT_BOUNDS,b.place(pyr1, 10, 10));
+		b.commit();
 		assertEquals(Board.PLACE_OUT_BOUNDS,b.place(pyr1, 2, 10));
-		assertEquals(Board.PLACE_OUT_BOUNDS,b.place(pyr1, 2, 5));
-		assertEquals(Board.PLACE_OUT_BOUNDS,b.place(pyr1, 0, 5));
+		b.commit();
+		assertEquals(Board.PLACE_OUT_BOUNDS,b.place(pyr1, 2, 5));	b.commit();
+		assertEquals(Board.PLACE_OUT_BOUNDS,b.place(pyr1, 0, 5));	b.commit();
 	}
 	public void testPlace1() {
 		b = new Board(3,6);
@@ -174,9 +178,8 @@ public class BoardTest extends TestCase {
 		}catch(Exception e){
 			b.commit();
 		}
-		b.commit();
+		assertEquals(true, b.getGrid(0,0));
 		b.undo();
-		assertEquals(false, b.getGrid(0,0));
 	}
 	public void testPlace2() {
 		b = new Board(3,6);
@@ -186,15 +189,21 @@ public class BoardTest extends TestCase {
 		b.place(pyr1, 0, 0);
 		b.undo();
 		b.commit();
-		assertEquals(Board.PLACE_BAD, b.place(pyr1, 0, 0));
-		b.undo();
-		assertEquals(true, b.getGrid(0,0));
+		assertEquals(false,b.getGrid(0, 0));
+		b.place(stick, 0, 0);
+		b.commit();
+		assertEquals(true, b.getGrid(0, 0));
+	
+		assertEquals(Board.PLACE_BAD,b.place(pyr1, 0, 0) );
 //		String s1 = b.toString();
 //		System.out.println(s1);
 	}
 	
 	public void testPlace3() {
 		b = new Board(4,6);
+		b.place(stick_rotate, 0, 0);
+		assertEquals(1, b.clearRows());
+		b.commit();
 //		String s1 = b.toString();
 //		System.out.println(s1);
 		b.place(stick_rotate, 0, 0);
@@ -203,12 +212,40 @@ public class BoardTest extends TestCase {
 		b.commit();
 		b.place(stick_rotate,0, 2);
 		b.commit();
-		String s1 = b.toString();
+//		String s1 = b.toString();
+//		System.out.println(s1);
+		assertEquals(3, b.clearRows());
+//		s1 = b.toString();
+//		System.out.println(s1);	
+	}
+	public void testPlace4() {
+		b = new Board(5,5);
+		String  s1;
+		b.place(square, 0, 0);
+		b.commit();
+		assertEquals(2, b.dropHeight(square, 0));
+		b.place(pyr1, 2, 0);
+		b.commit();
+		b.place(s2_rotated, 2, 1);
+		b.commit();
+		b.place(stick, 4, 1);
+		b.commit();
+		assertEquals(5, b.getMaxHeight());
+		assertEquals(2, b.clearRows());
+		b.commit();
+		b.place(square, 0, 0);
+		b.commit();
+		b.place(s2_rotated, 2, 1);
+		b.commit();
+		assertEquals(Board.PLACE_OUT_BOUNDS,b.place(s1_rotated, 4, 3));
+		b.commit();
+		b.place(square, 0, 2);
+		b.commit();	
+		s1 = b.toString();
 		System.out.println(s1);
 		assertEquals(3, b.clearRows());
 		s1 = b.toString();
-		System.out.println(s1);
-		
+		System.out.println(s1);		
 	}
 }
 
